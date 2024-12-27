@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from functools import partial
 
 from RNN import RNN_LSTM_onlyLastHidden, BRNN, RNN_LSTM_withAttention
+from hybrid_fcn import Hybrid_FCN_Reservoir
 from rl_dqn import (
     ReplayBuffer,
     FCN_QNet,
@@ -214,7 +215,7 @@ network_choice = "test"
 row_width = action_depth + hp_depth + energy_depth
 col_length = env.observation_space.shape[0] + init_HP_len
 
-if network_choice == "FCN_Reservoir_QNet":
+if network_choice == "FCN_QNet":
     # FCN_QNet() takes two params: insize and outsize
     # insize ==> input size == size of the observation space
     # insize is flattened obs
@@ -224,6 +225,13 @@ if network_choice == "FCN_Reservoir_QNet":
     print("FCN_QNet outsize = ", n_actions)
     q = FCN_QNet(insize, n_actions).to(device)
     q_target = FCN_QNet(insize, n_actions).to(device)
+elif network_choice == "Hybrid_FCN_Reservoir":
+    insize = col_length * row_width
+    print("FCN_QNet insize = ", insize)
+    # outsize ==> output size == number of actions
+    print("FCN_QNet outsize = ", n_actions)
+    q = Hybrid_FCN_Reservoir(insize, n_actions).to(device)
+    q_target = Hybrid_FCN_Reservoir(insize, n_actions).to(device)
 elif network_choice == "RNN_LSTM_onlyLastHidden":
     # config for RNN
     input_size = row_width
